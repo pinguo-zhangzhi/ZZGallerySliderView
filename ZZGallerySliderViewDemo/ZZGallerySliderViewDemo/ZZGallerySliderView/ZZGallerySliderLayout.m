@@ -77,6 +77,10 @@
     
     NSArray* array = [super layoutAttributesForElementsInRect:correctRect];
     
+    CGFloat riseOfCurrentItem = CELL_CURRHEIGHT-DRAG_INTERVAL; //当前ITEM Y坐标提高的量
+    CGFloat incrementalHeightOfCurrentItem = CELL_CURRHEIGHT-CELL_HEIGHT; //当前ITEM增加的高度
+    CGFloat offsetOfNextItem = incrementalHeightOfCurrentItem - riseOfCurrentItem; //当前ITEM以下的ITEM需要向下移动的位移
+    
     if(screen_y >= HEADER_HEIGHT){
         
         for(UICollectionViewLayoutAttributes *attributes in array){
@@ -91,11 +95,11 @@
                 [self setEffectViewAlpha:1 forIndexPath:attributes.indexPath];
             }else if(row == current_floor+1){
                 attributes.zIndex = 2;
-                attributes.frame = CGRectMake(0, attributes.frame.origin.y+(current_floor-1)*70-70*percent, CELL_WIDTH, CELL_HEIGHT+(CELL_CURRHEIGHT-CELL_HEIGHT)*percent);
+                attributes.frame = CGRectMake(0, attributes.frame.origin.y+(current_floor-1)*offsetOfNextItem-riseOfCurrentItem*percent, CELL_WIDTH, CELL_HEIGHT+(CELL_CURRHEIGHT-CELL_HEIGHT)*percent);
                 [self setEffectViewAlpha:percent forIndexPath:attributes.indexPath];
             }else{
                 attributes.zIndex = 0;
-                attributes.frame = CGRectMake(0, attributes.frame.origin.y+(current_floor-1)*70+70*percent, CELL_WIDTH, CELL_HEIGHT);
+                attributes.frame = CGRectMake(0, attributes.frame.origin.y+(current_floor-1)*offsetOfNextItem+offsetOfNextItem*percent, CELL_WIDTH, CELL_HEIGHT);
                 [self setEffectViewAlpha:0 forIndexPath:attributes.indexPath];
             }
             
@@ -107,7 +111,7 @@
         
         for(UICollectionViewLayoutAttributes *attributes in array){
             
-            if(attributes.indexPath.row > 1){ 
+            if(attributes.indexPath.row > 1){
                 [self setEffectViewAlpha:0 forIndexPath:attributes.indexPath];
             }
             [self setImageViewOfItem:(screen_y-attributes.frame.origin.y)/568*IMAGEVIEW_MOVE_DISTANCE withIndexPath:attributes.indexPath];
